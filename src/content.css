@@ -1,0 +1,17 @@
+.loghue-error { color: var(--loghue-error, #ff7b72) !important; font-weight: 600; }
+.loghue-warning { color: var(--loghue-warning, #e3b341) !important; font-weight: 600; }
+.loghue-success { color: var(--loghue-success, #3fb950) !important; }
+.loghue-info { color: var(--loghue-info, #79c0ff) !important; }
+.loghue-stage { color: var(--loghue-stage, #ffa657) !important; font-weight: 600; }
+.loghue-pipeline { color: var(--loghue-pipeline, #8b949e) !important; }
+.loghue-shell { color: var(--loghue-shell, #d2a8ff) !important; }
+.loghue-bracket { color: var(--loghue-bracket, #ffb86c) !important; }
+.loghue-exception { color: var(--loghue-exception, #ff7b72) !important; }
+.loghue-url { color: var(--loghue-url, #58a6ff) !important; text-decoration: underline; }
+.loghue-timestamp { color: var(--loghue-timestamp, #7ee787) !important; }
+.loghue-file { color: var(--loghue-file, #79c0ff) !important; }
+.loghue-time { color: var(--loghue-timestamp, #7ee787) !important; }
+
+.loghue-line-error { box-shadow: inset 3px 0 0 var(--loghue-error, #ff7b72); }
+.loghue-line-warning { box-shadow: inset 3px 0 0 var(--loghue-warning, #e3b341); }
+.loghue-line-success { box-shadow: inset 3px 0 0 var(--loghue-success, #3fb950); }

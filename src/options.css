@@ -1,0 +1,42 @@
+:root { color-scheme: light dark; }
+
+body {
+  margin: 0;
+  font: 15px/1.45 system-ui, sans-serif;
+}
+
+main {
+  max-width: 36rem;
+  padding: 1.5rem;
+}
+
+h1 { margin: 0 0 0.4rem; font-size: 1.4rem; }
+
+form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem 1rem;
+  align-items: center;
+  margin-top: 1.2rem;
+}
+
+label { margin: 0; }
+
+input[type="color"] {
+  width: 3rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid CanvasText;
+  background: transparent;
+}
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 1.2rem;
+}
+
+button { font: inherit; padding: 0.35rem 0.75rem; }
+
+#status:empty { display: none; }
