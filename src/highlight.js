@@ -52,7 +52,7 @@
 
   function levelClass(word) {
     const upper = String(word).replace(/[\[\]]/g, '').toUpperCase();
-    if (upper === 'ERROR' || upper === 'FAILURE' || upper === 'FAILED' || upper === 'FATAL') {
+    if (upper === 'ERROR' || upper === 'FAIL' || upper === 'FAILURE' || upper === 'FAILED' || upper === 'FATAL') {
       return 'loghue-error';
     }
     if (upper === 'WARN' || upper === 'WARNING' || upper === 'SKIPPED' || upper === 'TODO') {
@@ -77,6 +77,11 @@
         cls: 'loghue-file',
         re: /(?:[\w./@+-]+\.(?:js|mjs|cjs|ts|tsx|jsx|json|py|go|java|kt|rb|cs|cpp|cc|h|hpp|xml|yml|yaml|sh|gradle)|Dockerfile):\d+/gi,
       },
+      {
+        cls: 'loghue-file',
+        // A path has a slash. One slash still counts when the last part has an extension.
+        re: /(?:[A-Za-z]:\\(?:[\w.@+-]*[\w@+-]\\)+[\w.@+-]*[\w@+-]|\.{1,2}\/(?:[\w.@+-]*[\w@+-]\/)*[\w.@+-]*[\w@+-]|\/(?:[\w.@+-]*[\w@+-]\/)+[\w.@+-]*[\w@+-]|(?:[\w.@+-]*[\w@+-]\/){2,}[\w.@+-]*[\w@+-]|[\w.@+-]*[\w@+-]\/[\w.@+-]*[\w@+-]\.[A-Za-z0-9]{1,8})/g,
+      },
       { cls: 'loghue-exception', re: /\b(?:[\w$]+\.)*[\w$]*(?:Exception|Error)\b/g },
       { cls: 'loghue-exception', re: /\bat\s+(?:[\w$]+\.)+[\w$]+[^\n]*/g },
       { cls: 'loghue-timestamp', re: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/gi },
@@ -85,7 +90,7 @@
       { cls: 'loghue-error', re: /\b\d[\d,]*\s+failed\b/gi },
       { cls: 'loghue-warning', re: /\b\d[\d,]*\s+(?:skipped|todo)\b/gi },
       {
-        re: /\b(?:ERROR|FAILURE|FAILED|FATAL|WARN(?:ING)?|INFO|DEBUG|SUCCESS|PASSED|SKIPPED|TODO)\b/gi,
+        re: /\b(?:ERROR|FATAL|FAILURE|FAILED|FAIL|WARN(?:ING)?|INFO|DEBUG|SUCCESS|PASSED|SKIPPED|TODO)\b/gi,
         classFor(match) { return levelClass(match[0]); },
       },
       { cls: 'loghue-error', re: />>>/g },
@@ -134,10 +139,18 @@
     while (index < source.length) {
       const atLineStart = index === 0 || source[index - 1] === '\n';
       if (atLineStart) {
-        const shell = /^[ \t]*\+[ \t]+\S[^\n]*/.exec(source.slice(index));
-        if (shell && shell.index === 0) {
+        const rest = source.slice(index);
+        const shell = /^[ \t]*\+[ \t]+\S[^\n]*/.exec(rest);
+        if (shell) {
           pushToken(tokens, 'loghue-shell', shell[0]);
           index += shell[0].length;
+          continue;
+        }
+        // BuildKit prefixes the message with "#9 3.2". The line is still an error line.
+        const failed = /^[ \t]*(?:#\d+(?:\s+\d+(?:\.\d+)?)?\s+)?(?:\[(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\]|(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\b)[^\n]*/i.exec(rest);
+        if (failed) {
+          pushToken(tokens, 'loghue-error', failed[0]);
+          index += failed[0].length;
           continue;
         }
       }
@@ -170,7 +183,7 @@
 
   function lineTone(text) {
     const plain = String(text ?? '').replace(/\u001b\[[0-9;]*m/g, '');
-    if (/\b(?:ERROR|FAILURE|FAILED|FATAL)\b|Exception|failed to solve|exit code:\s*[1-9]/i.test(plain)) {
+    if (/\b(?:ERROR|FAIL|FAILURE|FAILED|FATAL)\b|Exception|failed to solve|exit code:\s*[1-9]/i.test(plain)) {
       return 'error';
     }
     if (/\bWARN(?:ING)?\b|Finished:\s*UNSTABLE/i.test(plain)) return 'warning';

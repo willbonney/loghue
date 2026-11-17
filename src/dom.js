@@ -141,12 +141,24 @@
         frag.append(el.ownerDocument.createTextNode(token.text));
         continue;
       }
-      const span = el.ownerDocument.createElement('span');
-      span.className = `loghue ${token.cls}`;
-      span.textContent = token.text;
-      frag.append(span);
+      frag.append(paintSpan(el.ownerDocument, token.cls, token.text));
     }
     el.replaceChildren(frag);
+  }
+
+  function paintSpan(doc, cls, text) {
+    const span = doc.createElement('span');
+    span.className = `loghue ${cls}`;
+    span.textContent = text;
+    const key = cls.slice('loghue-'.length);
+    const fallback = api.DEFAULT_COLORS[key] || 'inherit';
+    // Inline !important beats the controller theme, which otherwise keeps log text gray.
+    span.style.setProperty('color', `var(--${cls}, ${fallback})`, 'important');
+    if (cls === 'loghue-error' || cls === 'loghue-warning' || cls === 'loghue-stage') {
+      span.style.setProperty('font-weight', '600', 'important');
+    }
+    if (cls === 'loghue-url') span.style.setProperty('text-decoration', 'underline', 'important');
+    return span;
   }
 
   function unwrap(span) {
@@ -193,10 +205,7 @@
           frag.append(doc.createTextNode(token.text));
           continue;
         }
-        const span = doc.createElement('span');
-        span.className = `loghue ${token.cls}`;
-        span.textContent = token.text;
-        frag.append(span);
+        frag.append(paintSpan(doc, token.cls, token.text));
       }
       node.replaceWith(frag);
     }
@@ -208,7 +217,16 @@
     info.row.classList.toggle('loghue-line-error', tone === 'error');
     info.row.classList.toggle('loghue-line-warning', tone === 'warning');
     info.row.classList.toggle('loghue-line-success', tone === 'success');
-    if (info.time) info.time.classList.add('loghue-time');
+    if (tone) {
+      const fallback = api.DEFAULT_COLORS[tone];
+      info.row.style.setProperty('box-shadow', `inset 3px 0 0 var(--loghue-${tone}, ${fallback})`, 'important');
+    } else {
+      info.row.style.removeProperty('box-shadow');
+    }
+    if (info.time) {
+      info.time.classList.add('loghue-time');
+      info.time.style.setProperty('color', `var(--loghue-timestamp, ${api.DEFAULT_COLORS.timestamp})`, 'important');
+    }
     paintMessage(info.message, info.single);
   }
 
@@ -249,8 +267,12 @@
     for (const span of [...scope.querySelectorAll('.loghue')]) unwrap(span);
     for (const el of scope.querySelectorAll('.loghue-line-error, .loghue-line-warning, .loghue-line-success')) {
       el.classList.remove('loghue-line-error', 'loghue-line-warning', 'loghue-line-success');
+      el.style.removeProperty('box-shadow');
     }
-    for (const el of scope.querySelectorAll('.loghue-time')) el.classList.remove('loghue-time');
+    for (const el of scope.querySelectorAll('.loghue-time')) {
+      el.classList.remove('loghue-time');
+      el.style.removeProperty('color');
+    }
     for (const el of scope.querySelectorAll('[data-loghue-text]')) delete el.dataset.loghueText;
   }
 
