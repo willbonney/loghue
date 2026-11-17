@@ -2,7 +2,7 @@
 
 Syntax highlighting for Jenkins console logs in CloudBees CI Managed Controller, including CloudBees Pipeline Explorer.
 
-Inspired by [log-syntax-highlight-ext](https://github.com/KamilMatejuk/log-syntax-highlight-ext), which recolors classic Jenkins `<pre>` consoles. Pipeline Explorer renders each log line as its own row, with a line number and a timestamp, so Loghue colors those rows as they scroll into view.
+Pipeline Explorer renders each log line as its own row, with a line number and a timestamp, so Loghue colors those rows as they scroll into view.
 
 Highlighting stays in the browser. Log text is not sent anywhere.
 
