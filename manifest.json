@@ -40,7 +40,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "loghue@willbonney.github.io",
+      "id": "{75e48e34-0d36-4315-a8b3-03917125a0cf}",
       "strict_min_version": "128.0",
       "data_collection_permissions": {
         "required": ["none"]

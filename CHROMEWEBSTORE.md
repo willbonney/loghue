@@ -195,7 +195,7 @@ Submit the same zip as a listed add-on on the public site.
 | Field | Value |
 |-------|-------|
 | Name | Loghue |
-| Add-on ID | `loghue@willbonney.github.io` (already in the manifest; do not change it) |
+| Add-on ID | `{75e48e34-0d36-4315-a8b3-03917125a0cf}` (already in the manifest; do not change it after Firefox approves the add-on) |
 | Summary | Syntax highlighting for Jenkins console logs in CloudBees CI Pipeline Explorer. |
 | Description | Use the detailed description above. |
 | Categories | Web Development |
