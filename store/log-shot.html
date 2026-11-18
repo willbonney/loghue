@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Loghue log preview</title>
+  <link rel="stylesheet" href="../src/content.css">
+  <style>
+    html { color-scheme: only dark; background: #0d1117; }
+    body {
+      margin: 0;
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: #0d1117;
+      color: #e6edf3;
+      font: 15px/1.45 ui-monospace, "Cascadia Code", Consolas, monospace;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 72px;
+      padding: 0 28px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      font-family: system-ui, sans-serif;
+    }
+    header img { width: 40px; height: 40px; }
+    header strong { font-size: 18px; }
+    header span { color: #8b949e; }
+    .log { padding: 18px 0 0; }
+    .row {
+      display: grid;
+      grid-template-columns: 64px 132px 1fr;
+      gap: 12px;
+      padding: 3px 28px;
+    }
+    .num, .ts { color: #8b949e; }
+    .loghue-time { color: var(--loghue-timestamp, #7ee787) !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="../icons/icon-128.png" alt="">
+    <strong>Loghue</strong>
+    <span>Console log</span>
+  </header>
+  <div class="log" id="log"></div>
+  <script src="../src/highlight.js"></script>
+  <script>
+    const lines = [
+      ["12", "01:00:01 PM", "[Pipeline] stage"],
+      ["13", "01:00:01 PM", "[Pipeline] { (Package)"],
+      ["14", "01:00:02 PM", "+ npm test"],
+      ["15", "01:00:02 PM", "Tests  10 passed | 1 skipped | 0 todo"],
+      ["16", "01:00:03 PM", "#10 12.4  FAIL  src/app/Widget.test.tsx"],
+      ["17", "01:00:03 PM", "#10 12.4 TypeError: value is not a function"],
+      ["18", "01:00:04 PM", "ERROR: script returned exit code 1"],
+      ["19", "01:00:04 PM", "See https://ci.example/job/app/42/console"],
+      ["20", "01:00:05 PM", "Finished: FAILURE"],
+      ["21", "01:00:06 PM", "[WS-CLEANUP] Deleting project workspace..."],
+      ["22", "01:00:07 PM", "WARN: retrying checkout"],
+      ["23", "01:00:08 PM", "+ docker build --tag app:42 ."],
+      ["24", "01:00:09 PM", "Dockerfile:10"],
+      ["25", "01:00:10 PM", "ERROR: failed to solve: process did not complete successfully: exit code: 1"],
+      ["26", "01:00:11 PM", "Running in /home/jenkins/agent/workspace/app"],
+      ["27", "01:00:12 PM", "[2024-01-15T12:00:00.000Z] checkout complete"],
+    ];
+    const log = document.querySelector("#log");
+    for (const [num, time, text] of lines) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const tone = Loghue.lineTone(text);
+      if (tone) row.classList.add(`loghue-line-${tone}`);
+      const n = document.createElement("span");
+      n.className = "num";
+      n.textContent = num;
+      const t = document.createElement("span");
+      t.className = "ts loghue loghue-time";
+      t.textContent = time;
+      const msg = document.createElement("span");
+      for (const token of Loghue.tokenize(text)) {
+        if (!token.cls) {
+          msg.append(document.createTextNode(token.text));
+          continue;
+        }
+        const span = document.createElement("span");
+        span.className = `loghue ${token.cls}`;
+        span.textContent = token.text;
+        msg.append(span);
+      }
+      row.append(n, t, msg);
+      log.append(row);
+    }
+  </script>
+</body>
+</html>

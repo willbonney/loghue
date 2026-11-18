@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Loghue colors preview</title>
+  <link rel="stylesheet" href="../src/popup.css">
+  <link rel="stylesheet" href="../src/options.css">
+  <style>
+    html { color-scheme: light; background: #f6f8fa; }
+    body {
+      margin: 0;
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: #f6f8fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+    }
+    .popup {
+      width: 280px;
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+    }
+    main {
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+    }
+  </style>
+</head>
+<body>
+  <div class="popup">
+    <h1>Loghue</h1>
+    <p>Syntax highlighting for Jenkins logs in CloudBees CI.</p>
+    <label class="toggle">
+      <input id="enabled" type="checkbox" checked>
+      Highlight logs
+    </label>
+    <button id="options" type="button">Colors</button>
+    <p id="status" role="status"></p>
+  </div>
+  <main>
+    <h1>Loghue colors</h1>
+    <p>These colors apply to Jenkins console text in CloudBees Pipeline Explorer and the classic console.</p>
+    <form id="colors"></form>
+    <p class="actions">
+      <button id="reset" type="button">Reset colors</button>
+      <span id="status" role="status"></span>
+    </p>
+  </main>
+  <script>
+    globalThis.chrome = {
+      storage: {
+        sync: {
+          async get(defaults) { return defaults; },
+          async set() {},
+        },
+      },
+      runtime: { openOptionsPage() {} },
+    };
+  </script>
+  <script src="../src/highlight.js"></script>
+  <script src="../src/options.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icons/icon-128.png" alt="Loghue" width="128" height="128">
+  <img src="icons/icon-512.png" alt="Loghue" width="128" height="128">
 </p>
 
 # Loghue
