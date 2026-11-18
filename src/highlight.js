@@ -146,8 +146,8 @@
           index += shell[0].length;
           continue;
         }
-        // BuildKit prefixes the message with "#9 3.2". The line is still an error line.
-        const failed = /^[ \t]*(?:#\d+(?:\s+\d+(?:\.\d+)?)?\s+)?(?:\[(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\]|(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\b)[^\n]*/i.exec(rest);
+        // BuildKit prefixes the message with "#10 12.4". TypeError is an error line too.
+        const failed = /^[ \t]*(?:#\d+(?:\s+\d+(?:\.\d+)?)?\s+)?(?:\[(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\]|(?:ERROR|FATAL|FAILURE|FAILED|FAIL)\b|(?:[\w$.]+)*(?:Exception|Error)\b)[^\n]*/i.exec(rest);
         if (failed) {
           pushToken(tokens, 'loghue-error', failed[0]);
           index += failed[0].length;
@@ -183,7 +183,7 @@
 
   function lineTone(text) {
     const plain = String(text ?? '').replace(/\u001b\[[0-9;]*m/g, '');
-    if (/\b(?:ERROR|FAIL|FAILURE|FAILED|FATAL)\b|Exception|failed to solve|exit code:\s*[1-9]/i.test(plain)) {
+    if (/\b(?:ERROR|FAIL|FAILURE|FAILED|FATAL)\b|(?:Exception|Error)\b|failed to solve|exit code:\s*[1-9]/i.test(plain)) {
       return 'error';
     }
     if (/\bWARN(?:ING)?\b|Finished:\s*UNSTABLE/i.test(plain)) return 'warning';

@@ -8,7 +8,7 @@ Highlighting stays in the browser. Log text is not sent anywhere.
 
 ## What it colors
 
-- Errors, warnings, failures, and exception names, with a bar on the row. A line that starts with `FAIL` or `ERROR` (including a BuildKit `#9 3.2` prefix) is entirely red
+- Errors, warnings, failures, and exception names, with a bar on the row. A line that starts with `FAIL`, `ERROR`, or a name like `TypeError` (including a BuildKit `#10 12.4` prefix) is entirely red
 - `Finished: SUCCESS` and `Finished: FAILURE`
 - Pipeline steps (`[Pipeline]`) and stage lines
 - Shell traces that start with `+`

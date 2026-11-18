@@ -25,7 +25,8 @@
       const only = node.children[0];
       if (!only || only.classList?.contains('loghue')) break;
       if (skippedCell(only)) break;
-      if (only.textContent !== node.textContent) break;
+      // The message cell has whitespace around its one content div.
+      if (only.textContent.trim() !== node.textContent.trim()) break;
       node = only;
     }
     return node;
@@ -64,16 +65,20 @@
       rest.push(child);
     }
 
-    if (!lineNo || rest.length === 0) return null;
-    if (!time && !options.loose) return null;
+    if (!lineNo || (!time && !options.loose)) return null;
 
-    let message = rest[0];
-    for (const candidate of rest) {
-      if (candidate.textContent.length > message.textContent.length) message = candidate;
+    // Pipeline Explorer renders the text in td > div[data-testid^="line-content"].
+    let message = el.querySelector?.('[data-testid^="line-content"]') || null;
+    if (!message) {
+      if (rest.length === 0) return null;
+      message = rest[0];
+      for (const candidate of rest) {
+        if (candidate.textContent.length > message.textContent.length) message = candidate;
+      }
+      message = deepen(message);
     }
-    message = deepen(message);
     if (!message.textContent.trim()) return null;
-    if (message.querySelector?.('div, tr, li, table')) return null;
+    if (message.querySelector?.('tr, table')) return null;
     if (!time && !api.looksLikeLogText(message.textContent)) return null;
     return { row: el, time, message, single: false };
   }
@@ -154,7 +159,7 @@
     const fallback = api.DEFAULT_COLORS[key] || 'inherit';
     // Inline !important beats the controller theme, which otherwise keeps log text gray.
     span.style.setProperty('color', `var(--${cls}, ${fallback})`, 'important');
-    if (cls === 'loghue-error' || cls === 'loghue-warning' || cls === 'loghue-stage') {
+    if (cls === 'loghue-error' || cls === 'loghue-warning' || cls === 'loghue-stage' || cls === 'loghue-exception') {
       span.style.setProperty('font-weight', '600', 'important');
     }
     if (cls === 'loghue-url') span.style.setProperty('text-decoration', 'underline', 'important');
@@ -230,11 +235,20 @@
     paintMessage(info.message, info.single);
   }
 
+  function ownedBy(rootNode, el) {
+    if (!rootNode || el === rootNode) return true;
+    let node = el;
+    while (node && node !== rootNode) {
+      node = node.parentNode || node.parentElement || node.host || null;
+    }
+    return node === rootNode;
+  }
+
   function collectRows(rootNode, loose) {
     const rows = [];
     const seen = new Set();
     for (const el of queryAllDeep(rootNode, 'div, tr, li')) {
-      if (rootNode.contains && el !== rootNode && !rootNode.contains(el)) continue;
+      if (!ownedBy(rootNode, el)) continue;
       const info = classifyRow(el, { loose });
       if (!info || seen.has(info.row)) continue;
       seen.add(info.row);
