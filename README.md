@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icons/icon-128.png" alt="Loghue" width="128" height="128">
+</p>
+
 # Loghue
 
 Syntax highlighting for Jenkins console logs in CloudBees CI Managed Controller, including CloudBees Pipeline Explorer.
